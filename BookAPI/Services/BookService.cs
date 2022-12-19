@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 namespace BookAPI.Services;
 public class BookService : IBookService
 {
-    private readonly DataContext? _context;
+    private readonly DataContext _context;
     private List<Book> _booksCache;
     public BookService()
     {
@@ -17,21 +17,21 @@ public class BookService : IBookService
         return _booksCache;
     }
 
-    public Book? Get(int id)
+    public Book Get(int id)
     {
         return _booksCache.First(x => x.Id == id);
     }
 
     public async Task Add(List<Book> book)
     {
-        await _context!.Books.AddRangeAsync(book.ToHashSet());
+        await _context.Books.AddRangeAsync(book.ToHashSet());
         await _context.SaveChangesAsync();
         _booksCache = await _context.Books.ToListAsync();
     }
 
     public async Task<List<Book>> Delete(int id)
     {
-        var book = await _context!.Books.FindAsync(id);
+        var book = await _context.Books.FindAsync(id);
         if (book is not null)
         {
             _context.Books.Remove(book);
@@ -39,7 +39,7 @@ public class BookService : IBookService
             _booksCache = await _context.Books.ToListAsync();
             return _booksCache.ToList();
         }
-        
-        return (List<Book>)Enumerable.Empty<Book>();
+
+        return Enumerable.Empty<Book>().ToList();
     }
 }
