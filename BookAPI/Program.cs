@@ -7,7 +7,7 @@ builder.Services.AddControllers();
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-builder.Services.AddScoped<IBookService,BookService>();
+builder.Services.AddSingleton<IBookService,BookService>();
 builder.Services.AddDbContext<DataContext>();
 
 var app = builder.Build();

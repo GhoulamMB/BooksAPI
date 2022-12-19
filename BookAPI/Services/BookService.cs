@@ -5,22 +5,21 @@ namespace BookAPI.Services;
 public class BookService : IBookService
 {
     private readonly DataContext? _context;
-    private IList<Book> _booksCache;
+    private List<Book> _booksCache;
     public BookService()
     {
         _context = new DataContext();
+        //Cache data
         _booksCache = _context.Books.ToList();
     }
-    public Task<IEnumerable<Book>> GetAll()
+    public List<Book> GetAll()
     {
-        //var books = await _context!.Books.ToListAsync();
-        return Task.FromResult<IEnumerable<Book>>(_booksCache);
+        return _booksCache;
     }
 
-    public Task<Book?> Get(int id)
+    public Book? Get(int id)
     {
-        var result = _booksCache.First(x => x.Id == id);
-        return Task.FromResult<Book?>(result);
+        return _booksCache.First(x => x.Id == id);
     }
 
     public async Task Add(List<Book> book)
@@ -33,13 +32,14 @@ public class BookService : IBookService
     public async Task<List<Book>> Delete(int id)
     {
         var book = await _context!.Books.FindAsync(id);
-        if (book is null)
+        if (book is not null)
         {
-            return (List<Book>)Enumerable.Empty<Book>();
+            _context.Books.Remove(book);
+            await _context.SaveChangesAsync();
+            _booksCache = await _context.Books.ToListAsync();
+            return _booksCache.ToList();
         }
-        _context.Books.Remove(book);
-        await _context.SaveChangesAsync();
-        _booksCache = await _context.Books.ToListAsync();
-        return await _context.Books.ToListAsync();
+        
+        return (List<Book>)Enumerable.Empty<Book>();
     }
 }

@@ -16,15 +16,15 @@ namespace BookAPI.Controllers
         }
 
         [HttpGet]
-        public async Task<IEnumerable<Book>> Get()
+        public List<Book> Get()
         {
-            return await _bookService.GetAll();
+            return _bookService.GetAll();
         }
 
         [HttpGet("{id:int}")]
-        public async Task<Book?> GetBook(int id)
+        public Book? GetBook(int id)
         {
-            return await _bookService.Get(id);
+            return _bookService.Get(id);
         }
         [HttpPost]
         public async Task AddBook(List<Book> book)
