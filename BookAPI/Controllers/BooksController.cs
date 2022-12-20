@@ -9,10 +9,12 @@ namespace BookAPI.Controllers
     public class BooksController : ControllerBase
     {
         private readonly IBookService _bookService;
+        private readonly IBooksCache _booksCache;
 
-        public BooksController(IBookService bookService)
+        public BooksController(IBookService bookService, IBooksCache booksCache)
         {
             _bookService = bookService;
+            _booksCache = booksCache;
         }
 
         [HttpGet]
@@ -33,7 +35,7 @@ namespace BookAPI.Controllers
         }
 
         [HttpDelete("{id:int}")]
-        public async Task<IEnumerable<Book>> Delete(int id)
+        public async Task<bool> Delete(int id)
         {
             return await _bookService.Delete(id);
         }

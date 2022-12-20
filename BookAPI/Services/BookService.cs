@@ -5,41 +5,40 @@ namespace BookAPI.Services;
 public class BookService : IBookService
 {
     private readonly DataContext _context;
-    private List<Book> _booksCache;
+    private BooksCache _cache;
     public BookService()
     {
         _context = new DataContext();
         //Cache data
-        _booksCache = _context.Books.ToList();
+        _cache = new(_context.Books.ToList());
     }
     public List<Book> GetAll()
     {
-        return _booksCache;
+        return _cache.Books.Values.ToList();
     }
 
     public Book Get(int id)
     {
-        return _booksCache.First(x => x.Id == id);
+        return _cache.Books[id];
     }
 
     public async Task Add(List<Book> book)
     {
         await _context.Books.AddRangeAsync(book.ToHashSet());
         await _context.SaveChangesAsync();
-        _booksCache = await _context.Books.ToListAsync();
+        _cache.Books = await _context.Books.ToDictionaryAsync(b=>b.Id,b=>b);
     }
 
-    public async Task<List<Book>> Delete(int id)
+    public async Task<bool> Delete(int id)
     {
         var book = await _context.Books.FindAsync(id);
         if (book is not null)
         {
             _context.Books.Remove(book);
             await _context.SaveChangesAsync();
-            _booksCache = await _context.Books.ToListAsync();
-            return _booksCache.ToList();
+            _cache.Books = await _context.Books.ToDictionaryAsync(b=>b.Id,b=>b);
+            return true;
         }
-
-        return Enumerable.Empty<Book>().ToList();
+        return false;
     }
 }
