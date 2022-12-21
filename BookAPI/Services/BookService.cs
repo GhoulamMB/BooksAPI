@@ -14,11 +14,19 @@ public class BookService : IBookService
     }
     public List<Book> GetAll()
     {
+        if (_cache.Books.Count == 0)
+        {
+            _cache = new(_context.Books.ToList());
+        }
         return _cache.Books.Values.ToList();
     }
 
     public Book Get(int id)
     {
+        if (_cache.Books.Count == 0)
+        {
+            _cache = new(_context.Books.ToList());
+        }
         return _cache.Books[id];
     }
 
