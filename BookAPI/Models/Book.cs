@@ -4,8 +4,7 @@ namespace BookAPI.Models;
 
 public class Book
 {
-    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
-    public int Id { get; set; }
+    public virtual int Id { get; set; } = default;
     public string? Title { get; set; }
     public string? Author { get; set; }
     public string? Description { get; set; }

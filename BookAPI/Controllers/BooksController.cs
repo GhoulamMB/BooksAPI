@@ -27,9 +27,9 @@ public class BooksController : ControllerBase
         return _bookService.Get(id);
     }
     [HttpPost]
-    public async Task AddBook(List<Book> book)
+    public async Task AddBook(List<BookRequest> book)
     {
-        await _bookService.Add(book);
+        await _bookService.Add(book.Cast<Book>().ToList());
     }
 
     [HttpDelete("{id:int}")]
